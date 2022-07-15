@@ -8,21 +8,21 @@ const items = async function () {
     itemsData = promise;
   });
 }
-/*const getOneProduct.split(",").join("");*/
 
+// Afficher les produits en fonctions de leur données
 const getProducts =  async () => {
   await items();
   console.log(itemsData)
 
   document.getElementById("items").innerHTML = itemsData.map((item) =>
-  `<a href="./product.html?id=${item._id}">
+  `<a href="./product.html?id=${item._id}"> 
     <article>
       <img src="${item.imageUrl}" alt="${item.altTxt}">
         <h3 class="productName">${item.name}</h3>
         <p class="productDescription">${item.description}</p>
     </article>
   </a>`
-);
+).join("");   // Retirer la virgule qui apparait
 }
 
 getProducts()
