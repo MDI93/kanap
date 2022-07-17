@@ -62,6 +62,55 @@ const getOneKanap =  async () => {
   selectColor.appendChild(tagOption);
     console.log("Affiche une option",tagOption);
   });
-} 
+  addCart(itemsData);
+};
 
 getOneKanap()
+
+// Ajout des produits au panier
+// Bouton ajout au panier 
+// Au clique ajoute les éléments sélectionnés (Couleur & quantité) au localStorage
+// Tableau data du produit à ajouter au panier
+const addCart = () => {
+  let bouton = document.getElementById("addToCart");
+  console.log(bouton);
+
+  bouton.addEventListener("click", () => {
+    let addProductStorage = JSON.parse(localStorage.getItem("productStorage"));
+    let selectColor = document.getElementById("colors");
+    console.log(selectColor.value);
+    console.log(addProductStorage); 
+
+const addColorQuantity = Object.assign({}, itemsData, {
+  id: `${id}`, 
+  quantity: 0,
+  color: `${selectColor.value}`,
+});                             
+ console.log("Tableau", addColorQuantity);
+
+// Conditions
+// Si null alors nouveau tableau de couleur et quantité, push to local storage
+// Sinon si différent de null alors boucle FOR récupère ID et Value
+// Si le tableau du storage est égal au tableau data 
+// Tu retournes la couleur && la quantité selectionné par rapport au tableau [i] 
+  if ( addProductStorage == null ) {
+    addProductStorage = [];
+    addProductStorage.push(addColorQuantity);
+    console.log(addProductStorage);
+    localStorage.setItem("productStorage", JSON.stringify(addProductStorage)); 
+  } else if(addProductStorage != null) {
+      for( i = 0 ; i < addProductStorage.length ; i++) {
+        console.log("test");
+        if ( 
+          addProductStorage[i]._id == itemsData.id && 
+          addProductStorage[i].colors == selectColor.value );          
+          { return(
+            addProductStorage[i].quantity++, 
+            console.log("quantity++"),
+            localStorage.setItem("productStorage", JSON.stringify(addProductStorage)),
+            addProductStorage = JSON.parse(localStorage.getItem("productStorage")));
+          };
+        }}; // Le local storage n'est pas mis a jour instantanement, Revoir la quantité
+  }); 
+  return (addProductStorage = JSON.parse(localStorage.getItem("productStorage")));
+}  
