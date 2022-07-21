@@ -67,50 +67,63 @@ const getOneKanap =  async () => {
 
 getOneKanap()
 
-// Ajout des produits au panier
+
 // Bouton ajout au panier 
-// Au clique ajoute les éléments sélectionnés (Couleur & quantité) au localStorage
-// Tableau data du produit à ajouter au panier
 const addCart = () => {
   let bouton = document.getElementById("addToCart");
   console.log(bouton);
 
+// Au clique ajoute les éléments sélectionnés (Couleur & quantité) au localStorage  
   bouton.addEventListener("click", () => {
     let addProductStorage = JSON.parse(localStorage.getItem("productStorage"));
     let selectColor = document.getElementById("colors");
-    console.log(selectColor.value);
-    console.log(addProductStorage); 
+      console.log(selectColor.value);
+      console.log(addProductStorage); 
+    let addQuantity = document.getElementById("quantity")
+      console.log(addQuantity)
 
-const addColorQuantity = Object.assign({}, itemsData, {
+// Tableau data du produit à ajouter au panier
+const addObject = Object.assign({}, {
   id: `${id}`, 
-  quantity: 0,
+  quantity: `${addQuantity.value}`,
   color: `${selectColor.value}`,
 });                             
- console.log("Tableau", addColorQuantity);
 
 // Conditions
 // Si null alors nouveau tableau de couleur et quantité, push to local storage
-// Sinon si différent de null alors boucle FOR récupère ID et Value
-// Si le tableau du storage est égal au tableau data 
-// Tu retournes la couleur && la quantité selectionné par rapport au tableau [i] 
   if ( addProductStorage == null ) {
     addProductStorage = [];
-    addProductStorage.push(addColorQuantity);
+    addProductStorage.push(addObject);
     console.log(addProductStorage);
     localStorage.setItem("productStorage", JSON.stringify(addProductStorage)); 
+// Sinon si différent de null alors boucle FOR récupère ID et Value pour la quantité
   } else if(addProductStorage != null) {
+      console.log(addProductStorage.indexOf(itemsData._id) !== -1)
+    if(addProductStorage.indexOf(itemsData._id) !== -1){
+      console.log(addProductStorage.indexOf)
       for( i = 0 ; i < addProductStorage.length ; i++) {
         console.log("test");
+// Si le tableau du storage est égal au tableau data 
         if ( 
-          addProductStorage[i]._id == itemsData.id && 
-          addProductStorage[i].colors == selectColor.value );          
-          { return(
-            addProductStorage[i].quantity++, 
-            console.log("quantity++"),
+          addProductStorage[i]._id == itemsData._id && addProductStorage[i].color == selectColor.value ) {
+// Tu retournes la couleur && la quantité selectionné par rapport au tableau [i] 
+          return (
+            addProductStorage[i].quantity = parseInt(addProductStorage[i].quantity) + parseInt(addQuantity.value), // Canapé La nouvelle variable est egale a la somme des deux
+            console.log(addProductStorage[i].quantity),
             localStorage.setItem("productStorage", JSON.stringify(addProductStorage)),
             addProductStorage = JSON.parse(localStorage.getItem("productStorage")));
-          };
-        }}; // Le local storage n'est pas mis a jour instantanement, Revoir la quantité
+            } else {
+              addProductStorage.push(addObject);
+              console.log(addProductStorage);
+              localStorage.setItem("productStorage", JSON.stringify(addProductStorage));
+            }
+        }} else {
+          addProductStorage.push(addObject);
+          console.log(addProductStorage);
+          localStorage.setItem("productStorage", JSON.stringify(addProductStorage));
+        }
+    };
+       // Le local storage n'est pas mis a jour instantanement, Revoir la quantité
   }); 
   return (addProductStorage = JSON.parse(localStorage.getItem("productStorage")));
 }  
