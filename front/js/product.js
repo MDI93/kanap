@@ -9,44 +9,44 @@ if(search_params.has('id')) {
 }
 
 // Afficher un seul produit en fonction de son 'ID'
-let itemsData = Object;
+let productData = Object;
 
-const item = async function () {
+const oneProductKanap = async function () {
   await fetch(` http://localhost:3000/api/products/${id} `)
   .then((response) => response.json())
   .then((promise) => {
-    itemsData = promise;  
+    productData = promise;  
 });
 }
 
 // Fonction qui permet d'afficher notre canapé
 const getOneKanap =  async () => {
-  await item();
+  await oneProductKanap();
 
 // Ajout de l'image du canapé  
   document.getElementById("item__img").innerHTML = 
-  ` <img src="${itemsData.imageUrl}" alt="Photographie d'un canapé"> `      
+  ` <img src="${productData.imageUrl}" alt="Photographie d'un canapé"> `      
 
 // Ajout du nom du canapé
   document.getElementById("title").innerHTML = 
-  ` ${itemsData.name} ` 
+  ` ${productData.name} ` 
 
 // Ajout du prix du canapé
   document.getElementById("price").innerHTML =
-  ` ${itemsData.price} ` 
+  ` ${productData.price} ` 
 
 // Ajout de la description du canapé
   document.getElementById("description").innerHTML = 
-  ` ${itemsData.description} `  
+  ` ${productData.description} `  
 
 // Sélection de la couleur du canapé 
   let selectColor = document.getElementById("colors");
-    console.log("Choix des couleurs",selectColor);
+    console.log("Choix des couleurs", selectColor);
 
-    console.log("Tableau des couleurs",itemsData.colors);
+    console.log("Tableau des couleurs", productData.colors);
 
 // Boucle qui récupere les couleurs du tableau en fonction de l'ID
-  itemsData.colors.forEach 
+  productData.colors.forEach 
   ( color => {
     console.log("Une couleur",color);
 
@@ -62,68 +62,52 @@ const getOneKanap =  async () => {
   selectColor.appendChild(tagOption);
     console.log("Affiche une option",tagOption);
   });
-  addCart(itemsData);
+  addBasket(productData);
 };
 
 getOneKanap()
 
-
 // Bouton ajout au panier 
-const addCart = () => {
+const addBasket = () => {
   let bouton = document.getElementById("addToCart");
   console.log(bouton);
 
 // Au clique ajoute les éléments sélectionnés (Couleur & quantité) au localStorage  
   bouton.addEventListener("click", () => {
-    let addProductStorage = JSON.parse(localStorage.getItem("productStorage"));
+    let getProductBasket = JSON.parse(localStorage.getItem("basket"));
+      console.log(getProductBasket);  
+
     let selectColor = document.getElementById("colors");
       console.log(selectColor.value);
-      console.log(addProductStorage); 
-    let addQuantity = document.getElementById("quantity")
-      console.log(addQuantity)
+
+    let addQuantityProduct = document.getElementById("quantity");
+      console.log(addQuantityProduct);
 
 // Tableau data du produit à ajouter au panier
-const addObject = Object.assign({}, {
+const addInfoProduct = Object.assign({}, {
   id: `${id}`, 
-  quantity: `${addQuantity.value}`,
+  quantity: `${addQuantityProduct.value}`,
   color: `${selectColor.value}`,
+  imageUrl: `${productData.imageUrl}`,
+  name: `${productData.name}`,
+  price: `${productData.price}`,
 });                             
 
-// Conditions
-// Si null alors nouveau tableau de couleur et quantité, push to local storage
-  if ( addProductStorage == null ) {
-    addProductStorage = [];
-    addProductStorage.push(addObject);
-    console.log(addProductStorage);
-    localStorage.setItem("productStorage", JSON.stringify(addProductStorage)); 
-// Sinon si différent de null alors boucle FOR récupère ID et Value pour la quantité
-  } else if(addProductStorage != null) {
-      console.log(addProductStorage.indexOf(itemsData._id) !== -1)
-    if(addProductStorage.indexOf(itemsData._id) !== -1){
-      console.log(addProductStorage.indexOf)
-      for( i = 0 ; i < addProductStorage.length ; i++) {
-        console.log("test");
-// Si le tableau du storage est égal au tableau data 
-        if ( 
-          addProductStorage[i]._id == itemsData._id && addProductStorage[i].color == selectColor.value ) {
-// Tu retournes la couleur && la quantité selectionné par rapport au tableau [i] 
-          return (
-            addProductStorage[i].quantity = parseInt(addProductStorage[i].quantity) + parseInt(addQuantity.value), // Canapé La nouvelle variable est egale a la somme des deux
-            console.log(addProductStorage[i].quantity),
-            localStorage.setItem("productStorage", JSON.stringify(addProductStorage)),
-            addProductStorage = JSON.parse(localStorage.getItem("productStorage")));
-            } else {
-              addProductStorage.push(addObject);
-              console.log(addProductStorage);
-              localStorage.setItem("productStorage", JSON.stringify(addProductStorage));
-            }
-        }} else {
-          addProductStorage.push(addObject);
-          console.log(addProductStorage);
-          localStorage.setItem("productStorage", JSON.stringify(addProductStorage));
-        }
-    };
-       // Le local storage n'est pas mis a jour instantanement, Revoir la quantité
-  }); 
-  return (addProductStorage = JSON.parse(localStorage.getItem("productStorage")));
-}  
+// Si le panier comporte déjà un canapé
+  if (!getProductBasket ) {
+    getProductBasket = [];
+  }
+  // On vérifie si le canapé est déjà dans le panier (id + couleur)
+  // La Fonction Find permet de rappatrier directement l'objet s'il trouve la condition
+  // On peut donc directement le modifier pour la quantité
+  const addQuantityBasket = getProductBasket.find((product) => 
+    product.id === addInfoProduct.id && product.color === addInfoProduct.color);
+      if (addQuantityBasket) {
+        addQuantityBasket.quantity = parseInt(addQuantityBasket.quantity) + parseInt(addInfoProduct.quantity)
+      // Sinon, si le produit n'est pas commandé, on le push directement dans le Local Storage
+      } else {
+        getProductBasket.push(addInfoProduct);
+      }
+      // On repousse dans le panier
+      localStorage.setItem("basket", JSON.stringify(getProductBasket))})
+  } 
