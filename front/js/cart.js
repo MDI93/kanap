@@ -23,12 +23,6 @@ function addProductBasket(product) {
 	saveProductBasket(basket);
 }
   
-  function removeProductFromBasket(product) {
-    let basket = getProductBasket();
-    basket = basket.filter(p => p._id != product._id);  // Fonction qui permet de supprimer un produit du panier
-    saveProductBasket(basket);
-  }
-  
   function modifQuantityBasket(product, quantity) {
     let basket = getProductBasket();
     let foundProduct = basket.find(p => p._id == product._id);
@@ -60,34 +54,8 @@ function addProductBasket(product) {
     }
     return total;
   }  */
-const getProductBasket = async function () {
-  await fetch(` basket `)
-  .then((response) => response.json())
-  .then((promise) => {
-    productData = promise;  
-  });
-};
-
 
 let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
-
-/* function getProductBasket() {
-	let basket = localStorage.getItem("basket");
-	if(basket == null){
-		return [];
-	} else {
-		return JSON.parse(basket);
-	}
-}*/
-
-/*
-Afficher les donnees de chaque produit hors du productStorage
-Avoir le bon prix avec la bonne quantité
-Faire fonctionner le bouton supprimer
-Quantité modifiable même dans le panier
-Avoir un panier vide (localStorage vide) a chaque fois
-Afficher un total avec le nombre d'article et le prix
-*/
 
 const productsInBasket = async function() {
   if(getProductsBasket) {
@@ -113,7 +81,7 @@ const productsInBasket = async function() {
             <p>Qté : </p>
               <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${basket.quantity}">
           </div>
-          <div class="cart__item__content__settings__delete" data-id="${basket.id}" data-color="${basket.color}">>
+          <div class="cart__item__content__settings__delete">
             <p class="deleteItem">Supprimer</p>
           </div>
         </div>
@@ -121,59 +89,89 @@ const productsInBasket = async function() {
     </article>
   </section>
   `
-);
-//modifQuantityBasket();
+).join("");   // Retire la virgule qui apparait;
+modifQuantityBasket();
 removeProductFromBasket();
+totalCart();
 }
 
 productsInBasket()
 
-// Une constante pour supprimer les produits du panier
+//**************************** Constante qui permet de supprimer les produits du panier ****************************//
+
 const removeProductFromBasket = async () => {
 // Une variable qui permet de retrouver les boutons supprimer
   let deleteItem = document.getElementsByClassName("deleteItem");
       console.log("Bouton supprimer", deleteItem);
-// Une boucle au moment du clique pour choisir le bon ID
+// Une boucle qui au moment du clique permet de choisir le bon produit
   for( let i = 0 ; i < deleteItem.length ; i++){
     deleteItem[i].addEventListener("click", () => {
-      console.log("Supprimer", deleteItem.addEventListener);
-  
-      let removeProduct = getProductBasket[i]._id; // fonction a revoir
-      console.log("retrait des produits", removeProduct);
+// On utilise 'closest' pour récuperer la data id & color sur l'article
+      let recupIdColor = deleteItem[i].closest("article");
+// Variable pour attribuer ces datas
+      let dataId = recupIdColor.getAttribute("data-id");
+      let dataColor = recupIdColor.getAttribute("data-color");
+      console.log(dataId)
+      console.log(dataColor)
 
 // On utilise Filter pour supprimer de maniere précise un élément 
-      getProductBasket = getProductBasket.filter(p => p._id !== removeProduct._id);
+      getProductsBasket = getProductsBasket.filter(p => p._id !== dataId && p.color !== dataColor);
+      console.log("data", getProductsBasket)
 // On renvoie les informations au local storage
-      localStorage.setItem("basket", JSON.stringify(getProductBasket));
+      localStorage.setItem("basket", JSON.stringify(getProductsBasket));
+// Supprime l'élément       
+      recupIdColor.remove();
+// Rafraichissement de la page      
+      //location.reload();
     });
   }};
 
+//************************ Constante qui permet de modifier la quantité des produits du panier ************************//
 
+const modifQuantityBasket = async () => {
 
+let selectQuantityBasket = document.getElementsByClassName("itemQuantity");
 
-// Constante qui permet de modifier la quantité de produits du panier
-const modifQuantityBasket = async (product, quantity) => {
-  console.log(modifQuantityBasket);
-  let basket = getProductBasket();
-  let foundProduct = basket.find(p => p._id == product._id);
-    if (foundProduct != undefined) {
-      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au panier
-      if(foundProduct.quantity <= 0) {
-        removeProductFromBasket(foundProduct);
-      } else {
-      getProductBasket(basket); 
-      }
-    }};
+for( let q = 0 ; q < selectQuantityBasket.length ; q++)
+selectQuantityBasket[q].addEventListener('change', (quantity) => {
+  console.log("select", modifQuantityBasket);
 
-// Constante qui permet de calculer le total du panier 
-const totalPriceProduct = [];
+  // On utilise 'closest' pour récuperer la data id & color sur l'article
+  let changeIdColor = selectQuantityBasket[q].select("article");
+  // Variable pour attribuer ces datas
+  let dataId = changeIdColor.getAttribute("data-id");
+    console.log(dataId)
 
-z = 0;
+  selectQuantityBasket = getProductsBasket.find(p => p._id !== dataId);
+  if (selectQuantityBasket != undefined) {
+    selectQuantityBasket.quantity += quantity; 
+    if(selectQuantityBasket.quantity <= 0) {
+      removeProductFromBasket(selectQuantityBasket);
+    } else {
+      localStorage.setItem("basket", JSON.stringify(getProductsBasket));
+    }
+}}); 
+}
 
-if (getProductBasket[z].id === getProductBasket[z].id) {
+//******************************** Constante qui permet de calculer le total du panier ********************************//    
 
-const productTotal =
-getProductBasket[z].quantity * basket[v].price;
+const totalCart = async () => { 
+  console.log("total", totalCart)
+
+  let total = 0;
+  for (let product of getProductsBasket) {   // Fonction qui permet de calculer le prix total des produits dans le panier
+    total += product.quantity * product.price;
+  }
+  return total;
+} 
+
+/*let totalPriceProduct = [];
+console.log(totalPriceProduct);
+
+let getTotalPriceProduct = document.getElementsByClassName("cart__price")
+  for(let t = 0 ; t < getTotalPriceProduct.length ; t++);
+
+const productTotal = `${getProductsBasket.quantity}` * `${getProductsBasket.price}`;
 
 totalPriceProduct.push(productTotal);
 
@@ -182,48 +180,10 @@ const totalPrice = totalPriceProduct.reduce(reducer);
 
 let htmlPrice = document.querySelector("#totalPrice");
 htmlPrice.innerHTML = `${totalPrice}`;
-}
-
-totalPriceProduct();
-
-/*const getTotalPriceProduct = () => {
-  await getProductBasket;
-  console.log("total", getTotalPriceProduct);
-  let basket = getProductBasket();
-  let total = 0;
-    for (let product of basket) {   // Fonction qui permet de calculer le prix total des produits dans le panier
-      total += product.quantity * product.price;
-    }
-    return total;
-  };
-
-getTotalPriceProduct();*/
-
-
-  
-
-
-/*
-const moreQuantityBasket = async ((product) => {
-  console.log("more quantity", productsInBasket)
-
-    let basket = getProductBasket();
-    let foundProduct = basket.find(p => p.id == product.id);
-    if (foundProduct != undefined) {
-      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au moment du panier
-      if(foundProduct.quantity <= 0) {
-        removeProductFromBasket(foundProduct);
-      } else {
-        saveProductBasket(basket); 
-      }
-}})
-
-const total = async ((product) => { 
-  console.log("total", total)
-
-document.getElementsByClassName("cart__price").innerHTML = getProductBasket.map((product)
 `
 <div class="cart__price">
-  <p>Total (<span id="totalQuantity"></span> articles) : <span id="totalPrice"><!-- 84,00 --></span> €</p>
-</div>`);
-})*/
+  <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : <span id="totalPrice">${totalPrice}</span> €</p>
+</div>
+`
+localStorage.setItem("basket", JSON.stringify(getProductsBasket));
+};*/
