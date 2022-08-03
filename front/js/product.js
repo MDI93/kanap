@@ -94,7 +94,7 @@ const addInfoProduct = Object.assign({}, {
 });                             
 
 // Si le panier comporte déjà un canapé
-  if (!getProductBasket ) {
+  if ( !getProductBasket ) {
     getProductBasket = [];
   }
   // On vérifie si le canapé est déjà dans le panier (id + couleur)

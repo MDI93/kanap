@@ -1,158 +1,229 @@
+/* function saveProductBasket(basket) {
+	localStorage.setItem("basket", JSON.stringify(basket));
+}
+
+function getProductBasket() {
+	let basket = localStorage.getItem("basket");
+	if(basket == null){
+		return [];
+	} else {
+		return JSON.parse(basket);
+	}
+}
+
+function addProductBasket(product) {
+	let basket = getProductBasket();
+	let foundProduct = basket.find(p => p._id == product._id);
+	if(foundProduct != undefined) {
+		foundProduct.quantity++;
+	} else {
+		product.quantity = 1;
+		basket.push(product);
+	}
+	saveProductBasket(basket);
+}
+  
+  function removeProductFromBasket(product) {
+    let basket = getProductBasket();
+    basket = basket.filter(p => p._id != product._id);  // Fonction qui permet de supprimer un produit du panier
+    saveProductBasket(basket);
+  }
+  
+  function modifQuantityBasket(product, quantity) {
+    let basket = getProductBasket();
+    let foundProduct = basket.find(p => p._id == product._id);
+    if (foundProduct != undefined) {
+      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au panier
+      if(foundProduct.quantity <= 0) {
+        removeProductFromBasket(foundProduct);
+      } else {
+        saveProductBasket(basket); 
+      }
+    } 
+    
+  }
+  
+  function getQuantityNumberProduct() {
+    let basket = getProductBasket();
+    let number = 0;
+    for (let product of basket) {     // Fonction qui permet de calculer la quantité des produits dans le panier
+      number += product.quantity;
+    }
+    return number;
+  }
+  
+  function getTotalPriceProduct() {
+    let basket = getProductBasket();
+    let total = 0;
+    for (let product of basket) {   // Fonction qui permet de calculer le prix total des produits dans le panier
+      total += product.quantity * product.price;
+    }
+    return total;
+  }  */
+const getProductBasket = async function () {
+  await fetch(` basket `)
+  .then((response) => response.json())
+  .then((promise) => {
+    productData = promise;  
+  });
+};
+
+
+let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
+
+/* function getProductBasket() {
+	let basket = localStorage.getItem("basket");
+	if(basket == null){
+		return [];
+	} else {
+		return JSON.parse(basket);
+	}
+}*/
+
 /*
 Afficher les donnees de chaque produit hors du productStorage
 Avoir le bon prix avec la bonne quantité
 Faire fonctionner le bouton supprimer
-Quanitité modifiable même dans le panier
+Quantité modifiable même dans le panier
 Avoir un panier vide (localStorage vide) a chaque fois
 Afficher un total avec le nombre d'article et le prix
 */
-let itemsData = Object;
 
-const item = async function () {
-  await fetch(` http://localhost:3000/api/products/order`)
-  .then((response) => response.json())
-  .then((promise) => {
-    itemsData = promise;  
-});
-}
-
-
-let addProductToCart = JSON.parse(localStorage.getItem("productStorage"));
-
-const itemsInCart = async function() {
-  console.log("PanierSuite");
-  if(addProductToCart) {
-    await addProductToCart;
-    console.log(addProductToCart);
+const productsInBasket = async function() {
+  if(getProductsBasket) {
+    await getProductsBasket;
+    console.log(getProductsBasket);
   }
 
-  cart__items.innerHTML = addProductToCart.map((productStorage) =>
+  document.getElementById("cart__items").innerHTML = getProductsBasket.map((basket) =>
   ` 
   <section id="cart__items">
-    <article class="cart__item" data-id="${productStorage._id}" data-color="${productStorage.color}">
+    <article class="cart__item" data-id="${basket.id}" data-color="${basket.color}">
       <div class="cart__item__img">
-        <img src="" alt="Photographie d'un canapé">
+        <img src="${basket.imageUrl}" alt="Photographie d'un canapé">
       </div>
       <div class="cart__item__content">
         <div class="cart__item__content__description">
-          <h2></h2>
-          <p>${productStorage.color}</p>
-          <p>${productStorage.price} €</p>
+          <h2>${basket.name}</h2>
+          <p>${basket.color}</p>
+          <p>${basket.price * basket.quantity} €</p>
         </div>
         <div class="cart__item__content__settings">
           <div class="cart__item__content__settings__quantity">
             <p>Qté : </p>
-              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productStorage.quantity}">
+              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${basket.quantity}">
           </div>
-          <div class="cart__item__content__settings__delete" data-id="${productStorage._id}" data-color="${productStorage.color}">>
+          <div class="cart__item__content__settings__delete" data-id="${basket.id}" data-color="${basket.color}">>
             <p class="deleteItem">Supprimer</p>
           </div>
         </div>
       </div>
     </article>
   </section>
-  `,
-  );
-/*const addObjects = Object.assign({}, {
-    imageUrl: `${}`, 
-    name: `${}`,
-    price: `${}`,
-  });*/  
+  `
+);
+//modifQuantityBasket();
+removeProductFromBasket();
 }
 
-itemsInCart()
+productsInBasket()
 
-  /*let selectOneItem = document.getElementsByClassName("cart__item");
-  console.log("Choix des produits",selectOneItem);
+// Une constante pour supprimer les produits du panier
+const removeProductFromBasket = async () => {
+// Une variable qui permet de retrouver les boutons supprimer
+  let deleteItem = document.getElementsByClassName("deleteItem");
+      console.log("Bouton supprimer", deleteItem);
+// Une boucle au moment du clique pour choisir le bon ID
+  for( let i = 0 ; i < deleteItem.length ; i++){
+    deleteItem[i].addEventListener("click", () => {
+      console.log("Supprimer", deleteItem.addEventListener);
+  
+      let removeProduct = getProductBasket[i]._id; // fonction a revoir
+      console.log("retrait des produits", removeProduct);
 
-  console.log("Tableau des produits", itemsData._id);
+// On utilise Filter pour supprimer de maniere précise un élément 
+      getProductBasket = getProductBasket.filter(p => p._id !== removeProduct._id);
+// On renvoie les informations au local storage
+      localStorage.setItem("basket", JSON.stringify(getProductBasket));
+    });
+  }};
 
-// Boucle qui récupere les couleurs du tableau en fonction de l'ID
-itemsData._id.forEach 
-( itemCart => {
-  console.log("Un produit", itemCart);
 
-// Crée nouvelle option en fonction du nombre de couleurs présentent dans le tableau de cet ID  
-let tagArticle = document.createElement("Article"); 
 
-// Affiche la couleur en fonction des options  
-tagArticle.innerHTML = `${addProductToCart}`;
-// Choisit la couleur dans l'ordre du tableau  
-tagArticle.value = `${addProductToCart}`; 
 
-// On lui demande d'aller chercher son enfant à afficher
-selectOneItem.appendChild(tagArticle);
-  console.log("Affiche un produit",tagArticle);
-});
-};
-itemsInCart()
-  /*cart__items.innerHTML = addProductToCart.map((productStorage) => 
-` 
-<section id="cart__items">
-  <article class="cart__item" data-id="{product-ID}" data-color="{product-color}"> // tagArticle
-    <div class="cart__item__img">
-      <img src="${productStorage.imageUrl}" alt="Photographie d'un canapé">
-    </div>
-    <div class="cart__item__content">
-      <div class="cart__item__content__description">
-        <h2>${productStorage.name}</h2>
-        <p>${productStorage.color}</p>
-        <p>${productStorage.price} €</p>
-      </div>
-      <div class="cart__item__content__settings">
-        <div class="cart__item__content__settings__quantity">
-          <p>Qté : </p>
-            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="">
-        </div>
-        <div class="cart__item__content__settings__delete" data-id="{product-ID}" data-color="{product-color}">
-          <p class="deleteItem">Supprimer</p>
-        </div>
-      </div>
-    </div>
-  </article>
-</section>
-`
-/*,
-  document.getElementsByClassName("cart__price") =
+// Constante qui permet de modifier la quantité de produits du panier
+const modifQuantityBasket = async (product, quantity) => {
+  console.log(modifQuantityBasket);
+  let basket = getProductBasket();
+  let foundProduct = basket.find(p => p._id == product._id);
+    if (foundProduct != undefined) {
+      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au panier
+      if(foundProduct.quantity <= 0) {
+        removeProductFromBasket(foundProduct);
+      } else {
+      getProductBasket(basket); 
+      }
+    }};
+
+// Constante qui permet de calculer le total du panier 
+const totalPriceProduct = [];
+
+z = 0;
+
+if (getProductBasket[z].id === getProductBasket[z].id) {
+
+const productTotal =
+getProductBasket[z].quantity * basket[v].price;
+
+totalPriceProduct.push(productTotal);
+
+const reducer = (accumulator, curr) => accumulator + curr;
+const totalPrice = totalPriceProduct.reduce(reducer);
+
+let htmlPrice = document.querySelector("#totalPrice");
+htmlPrice.innerHTML = `${totalPrice}`;
+}
+
+totalPriceProduct();
+
+/*const getTotalPriceProduct = () => {
+  await getProductBasket;
+  console.log("total", getTotalPriceProduct);
+  let basket = getProductBasket();
+  let total = 0;
+    for (let product of basket) {   // Fonction qui permet de calculer le prix total des produits dans le panier
+      total += product.quantity * product.price;
+    }
+    return total;
+  };
+
+getTotalPriceProduct();*/
+
+
+  
+
+
+/*
+const moreQuantityBasket = async ((product) => {
+  console.log("more quantity", productsInBasket)
+
+    let basket = getProductBasket();
+    let foundProduct = basket.find(p => p.id == product.id);
+    if (foundProduct != undefined) {
+      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au moment du panier
+      if(foundProduct.quantity <= 0) {
+        removeProductFromBasket(foundProduct);
+      } else {
+        saveProductBasket(basket); 
+      }
+}})
+
+const total = async ((product) => { 
+  console.log("total", total)
+
+document.getElementsByClassName("cart__price").innerHTML = getProductBasket.map((product)
 `
 <div class="cart__price">
-<p>Total (<span id="totalQuantity">${productStorage.quantity}</span> articles) : 
-<span id="totalPrice">"${productStorage.quantity * productStorage.price}"</span> €</p>
-</div>
-`,
-``*/
-
-
-  /*await fetch(` http://localhost:3000/api/cart/${id} `)
-  .then((response) => response.json())
-  .then((promise) => {
-    itemsData = promise;  */
-
-
-
-/* document.getElementById("cart__items").innerHTML = 
-` 
-<section id="cart__items">
-  <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
-    <div class="cart__item__img">
-      <img src="${itemsData.imageUrl}" alt="Photographie d'un canapé">
-    </div>
-    <div class="cart__item__content">
-      <div class="cart__item__content__description">
-        <h2>"${itemsData.name}"</h2>
-        <p>"${selectColor.value}"</p>
-        <p>"${itemsData.price}"/p>
-      </div>
-      <div class="cart__item__content__settings">
-        <div class="cart__item__content__settings__quantity">
-          <p>Qté : </p>
-            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
-        </div>
-        <div class="cart__item__content__settings__delete">
-          <p class="deleteItem">Supprimer</p>
-        </div>
-      </div>
-    </div>
-  </article>
-</section>
-`*/
+  <p>Total (<span id="totalQuantity"></span> articles) : <span id="totalPrice"><!-- 84,00 --></span> €</p>
+</div>`);
+})*/
