@@ -1,59 +1,4 @@
-/* function saveProductBasket(basket) {
-	localStorage.setItem("basket", JSON.stringify(basket));
-}
-
-function getProductBasket() {
-	let basket = localStorage.getItem("basket");
-	if(basket == null){
-		return [];
-	} else {
-		return JSON.parse(basket);
-	}
-}
-
-function addProductBasket(product) {
-	let basket = getProductBasket();
-	let foundProduct = basket.find(p => p._id == product._id);
-	if(foundProduct != undefined) {
-		foundProduct.quantity++;
-	} else {
-		product.quantity = 1;
-		basket.push(product);
-	}
-	saveProductBasket(basket);
-}
-  
-  function modifQuantityBasket(product, quantity) {
-    let basket = getProductBasket();
-    let foundProduct = basket.find(p => p._id == product._id);
-    if (foundProduct != undefined) {
-      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au panier
-      if(foundProduct.quantity <= 0) {
-        removeProductFromBasket(foundProduct);
-      } else {
-        saveProductBasket(basket); 
-      }
-    } 
-    
-  }
-  
-  function getQuantityNumberProduct() {
-    let basket = getProductBasket();
-    let number = 0;
-    for (let product of basket) {     // Fonction qui permet de calculer la quantité des produits dans le panier
-      number += product.quantity;
-    }
-    return number;
-  }
-  
-  function getTotalPriceProduct() {
-    let basket = getProductBasket();
-    let total = 0;
-    for (let product of basket) {   // Fonction qui permet de calculer le prix total des produits dans le panier
-      total += product.quantity * product.price;
-    }
-    return total;
-  }  */
+// Afficher les éléments présent dans le local Storage (basket)
 
 let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
 
@@ -90,14 +35,15 @@ const productsInBasket = async function() {
   </section>
   `
 ).join("");   // Retire la virgule qui apparait;
-modifQuantityBasket();
+//modifQuantityBasket();
 removeProductFromBasket();
-totalCart();
+totalPriceCart();
+totalQuantityCart();
 }
 
 productsInBasket()
 
-//**************************** Constante qui permet de supprimer les produits du panier ****************************//
+//****************************** Constante qui permet de supprimer les produits du panier ******************************//
 
 const removeProductFromBasket = async () => {
 // Une variable qui permet de retrouver les boutons supprimer
@@ -122,13 +68,59 @@ const removeProductFromBasket = async () => {
 // Supprime l'élément       
       recupIdColor.remove();
 // Rafraichissement de la page      
-      //location.reload();
+      location.reload();
     });
   }};
 
+//******************************** Constante qui permet de calculer le total du panier ********************************//
+
+//----------------------------------------------> Prix total du panier <----------------------------------------------//
+const totalPriceCart = async () => { 
+// Tableau vide pour y mettre les prix présent dans le local storage (getProductsBasket)
+  let totalPriceProduct = [];
+// Aller chercher les prix dans le panier
+  for(let t = 0 ; t < getProductsBasket.length ; t++){
+    const productPriceTotal =+ getProductsBasket[t].price;
+    totalPriceProduct.push(productPriceTotal);
+      console.log("constante multiplication", totalPriceProduct)
+// Additionner les prix avec la méthode reduce()  
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      console.log("reducer", reducer)      
+    const totalPrice = totalPriceProduct.reduce(reducer);
+      console.log("totalPrice", totalPrice)
+// Variable qui permet d'afficher le prix total du panier dans l'HTML  
+    let htmlPrice = document.querySelector("#totalPrice");
+    htmlPrice.innerHTML = `${totalPrice}`;
+      console.log(htmlPrice);
+  }  
+};
+//--------------------------------------------> Fin Prix total du panier <---------------------------------------------//  
+
+//--------------------------------------------> Quantité totale du panier <--------------------------------------------//
+const totalQuantityCart = async () => {
+// Tableau vide pour y mettre les quantités présentent dans le local storage (getProductsBasket)
+  let totalQuantityProduct = [];
+// Aller chercher les quantités dans le panier
+  for(let q = 0 ; q < getProductsBasket.length ; q++){
+    const productQuantityTotal =+ getProductsBasket[q].quantity;
+    totalQuantityProduct.push(productQuantityTotal);
+      console.log("constante", totalQuantityProduct)
+  // Additionner les prix avec la méthode reduce()  
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      console.log("reducer", reducer)      
+    const totalQuantity = totalQuantityProduct.reduce(reducer);
+      console.log("totalQuantity", totalQuantity)
+  // Variable qui permet d'afficher la quantité totale du panier dans l'HTML  
+    let htmlQuantity = document.querySelector("#totalQuantity");
+    htmlQuantity.innerHTML = `${totalQuantity}`;
+      console.log(htmlQuantity);
+  } 
+};
+//-------------------------------------------> Fin Quantité totale du panier <-------------------------------------------//
+
 //************************ Constante qui permet de modifier la quantité des produits du panier ************************//
 
-const modifQuantityBasket = async () => {
+/*const modifQuantityBasket = async () => {
 
 let selectQuantityBasket = document.getElementsByClassName("itemQuantity");
 
@@ -141,8 +133,9 @@ selectQuantityBasket[q].addEventListener('change', (quantity) => {
   // Variable pour attribuer ces datas
   let dataId = changeIdColor.getAttribute("data-id");
     console.log(dataId)
+  let dataColor = changeIdColor.getAttribute("data-color")
 
-  selectQuantityBasket = getProductsBasket.find(p => p._id !== dataId);
+  selectQuantityBasket = getProductsBasket.find(p => p._id !== dataId && p.color !== dataColor);
   if (selectQuantityBasket != undefined) {
     selectQuantityBasket.quantity += quantity; 
     if(selectQuantityBasket.quantity <= 0) {
@@ -151,39 +144,20 @@ selectQuantityBasket[q].addEventListener('change', (quantity) => {
       localStorage.setItem("basket", JSON.stringify(getProductsBasket));
     }
 }}); 
-}
+}*/
 
-//******************************** Constante qui permet de calculer le total du panier ********************************//    
-
-const totalCart = async () => { 
-  console.log("total", totalCart)
-
-  let total = 0;
-  for (let product of getProductsBasket) {   // Fonction qui permet de calculer le prix total des produits dans le panier
-    total += product.quantity * product.price;
+/*  
+  function modifQuantityBasket(product, quantity) {
+    let basket = getProductBasket();
+    let foundProduct = basket.find(p => p._id == product._id);
+    if (foundProduct != undefined) {
+      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au panier
+      if(foundProduct.quantity <= 0) {
+        removeProductFromBasket(foundProduct);
+      } else {
+        saveProductBasket(basket); 
+      }
+    } 
+    
   }
-  return total;
-} 
-
-/*let totalPriceProduct = [];
-console.log(totalPriceProduct);
-
-let getTotalPriceProduct = document.getElementsByClassName("cart__price")
-  for(let t = 0 ; t < getTotalPriceProduct.length ; t++);
-
-const productTotal = `${getProductsBasket.quantity}` * `${getProductsBasket.price}`;
-
-totalPriceProduct.push(productTotal);
-
-const reducer = (accumulator, curr) => accumulator + curr;
-const totalPrice = totalPriceProduct.reduce(reducer);
-
-let htmlPrice = document.querySelector("#totalPrice");
-htmlPrice.innerHTML = `${totalPrice}`;
-`
-<div class="cart__price">
-  <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : <span id="totalPrice">${totalPrice}</span> €</p>
-</div>
-`
-localStorage.setItem("basket", JSON.stringify(getProductsBasket));
-};*/
+*/  
