@@ -19,7 +19,7 @@ const productsInBasket = async function() {
         <div class="cart__item__content__description">
           <h2>${basket.name}</h2>
           <p>${basket.color}</p>
-          <p>${basket.price * basket.quantity} €</p>
+          <p>${basket.price} €</p>
         </div>
         <div class="cart__item__content__settings">
           <div class="cart__item__content__settings__quantity">
@@ -35,7 +35,7 @@ const productsInBasket = async function() {
   </section>
   `
 ).join("");   // Retire la virgule qui apparait;
-//modifQuantityBasket();
+modifQuantityBasket();
 removeProductFromBasket();
 totalPriceCart();
 totalQuantityCart();
@@ -53,13 +53,12 @@ const removeProductFromBasket = async () => {
   for( let i = 0 ; i < deleteItem.length ; i++){
     deleteItem[i].addEventListener("click", () => {
 // On utilise 'closest' pour récuperer la data id & color sur l'article
-      let recupIdColor = deleteItem[i].closest("article");
+  let recupIdColor = deleteItem[i].closest("article");
 // Variable pour attribuer ces datas
-      let dataId = recupIdColor.getAttribute("data-id");
-      let dataColor = recupIdColor.getAttribute("data-color");
-      console.log(dataId)
-      console.log(dataColor)
-
+  let dataId = recupIdColor.getAttribute("data-id");
+    console.log(dataId)
+  let dataColor = recupIdColor.getAttribute("data-color");
+    console.log(dataColor)
 // On utilise Filter pour supprimer de maniere précise un élément 
       getProductsBasket = getProductsBasket.filter(p => p._id !== dataId && p.color !== dataColor);
       console.log("data", getProductsBasket)
@@ -80,13 +79,12 @@ const totalPriceCart = async () => {
   let totalPriceProduct = [];
 // Aller chercher les prix dans le panier
   for(let t = 0 ; t < getProductsBasket.length ; t++){
-    const productPriceTotal =+ getProductsBasket[t].price;
+    const productPriceTotal =+ getProductsBasket[t].price * getProductsBasket[t].quantity;
     totalPriceProduct.push(productPriceTotal);
-      console.log("constante multiplication", totalPriceProduct)
+      console.log("constante", totalPriceProduct)
 // Additionner les prix avec la méthode reduce()  
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
-      console.log("reducer", reducer)      
-    const totalPrice = totalPriceProduct.reduce(reducer);
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;    
+    const totalPrice = totalPriceProduct.reduce(reducer, 0);
       console.log("totalPrice", totalPrice)
 // Variable qui permet d'afficher le prix total du panier dans l'HTML  
     let htmlPrice = document.querySelector("#totalPrice");
@@ -106,9 +104,8 @@ const totalQuantityCart = async () => {
     totalQuantityProduct.push(productQuantityTotal);
       console.log("constante", totalQuantityProduct)
   // Additionner les prix avec la méthode reduce()  
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
-      console.log("reducer", reducer)      
-    const totalQuantity = totalQuantityProduct.reduce(reducer);
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;     
+    const totalQuantity = totalQuantityProduct.reduce(reducer, 0);
       console.log("totalQuantity", totalQuantity)
   // Variable qui permet d'afficher la quantité totale du panier dans l'HTML  
     let htmlQuantity = document.querySelector("#totalQuantity");
@@ -120,44 +117,127 @@ const totalQuantityCart = async () => {
 
 //************************ Constante qui permet de modifier la quantité des produits du panier ************************//
 
-/*const modifQuantityBasket = async () => {
+const modifQuantityBasket = () => {
 
-let selectQuantityBasket = document.getElementsByClassName("itemQuantity");
+  let addQuantityFromBasket = document.getElementsByClassName("itemQuantity")
+      console.log("Bouton select + -", addQuantityFromBasket);
+// Une boucle qui au moment du clique permet de choisir le nombre de quantité
+  for( let m = 0 ; m < addQuantityFromBasket.length ; m++){
+    addQuantityFromBasket[m].addEventListener("change", () => {
+      console.log("clique", addQuantityFromBasket[m].addEventListener)
+// Recupère la nouvelle valeur au moment du clique      
+    let moreQuantity = addQuantityFromBasket[m].value;
+     console.log(moreQuantity);
+// On utilise 'closest()' pour récuperer la data id & color sur l'article      
+    let recupIdColor = addQuantityFromBasket[m].closest("article");
+      console.log(recupIdColor)
+// Variable pour attribuer ces datas      
+    let dataId = recupIdColor.getAttribute("data-id");
+      console.log(dataId)
+    let dataColor = recupIdColor.getAttribute("data-color");
+      console.log(dataColor)
 
-for( let q = 0 ; q < selectQuantityBasket.length ; q++)
-selectQuantityBasket[q].addEventListener('change', (quantity) => {
-  console.log("select", modifQuantityBasket);
+    console.log("avant find", getProductsBasket);
+// On utilise 'find()'     
+    let foundProducts = getProductsBasket.find(p => p.id === dataId && p.color === dataColor);
+      console.log("methode find", foundProducts) 
 
-  // On utilise 'closest' pour récuperer la data id & color sur l'article
-  let changeIdColor = selectQuantityBasket[q].select("article");
-  // Variable pour attribuer ces datas
-  let dataId = changeIdColor.getAttribute("data-id");
-    console.log(dataId)
-  let dataColor = changeIdColor.getAttribute("data-color")
-
-  selectQuantityBasket = getProductsBasket.find(p => p._id !== dataId && p.color !== dataColor);
-  if (selectQuantityBasket != undefined) {
-    selectQuantityBasket.quantity += quantity; 
-    if(selectQuantityBasket.quantity <= 0) {
-      removeProductFromBasket(selectQuantityBasket);
-    } else {
-      localStorage.setItem("basket", JSON.stringify(getProductsBasket));
-    }
-}}); 
-}*/
-
-/*  
-  function modifQuantityBasket(product, quantity) {
-    let basket = getProductBasket();
-    let foundProduct = basket.find(p => p._id == product._id);
-    if (foundProduct != undefined) {
-      foundProduct.quantity += quantity;  // Fonction qui permet d'ajouter un produit au panier
-      if(foundProduct.quantity <= 0) {
-        removeProductFromBasket(foundProduct);
-      } else {
-        saveProductBasket(basket); 
-      }
-    } 
+    let index = getProductsBasket.indexOf(foundProducts)
+      console.log(index)
     
+    getProductsBasket.fill(foundProducts.quantity = moreQuantity, index, index);
+
+    localStorage.setItem("basket", JSON.stringify(getProductsBasket));
+      
+    totalQuantityCart();
+    totalPriceCart();
+  });
+}};
+//-------------------------------------------> Fin Modif quantité du panier <-------------------------------------------//
+
+//********************************************** Formulaire de commande  **********************************************//
+
+//********************************************** Bouton formulaire & commande  **********************************************//
+
+// Bouton de commande
+let btnOrderForm = document.querySelector(".cart__order__form__submit");
+  console.log(btnOrderForm);
+// Au moment du clique on en envoie le formulaire dans le local storage
+btnOrderForm.addEventListener("click", (e) => {
+  let formInputFirstName = document.getElementById("firstName")
+  console.log(formInput);
+// Autorise les lettres minuscules, majuscules, les tirets et les espaces.  
+  let formRegex = /^[a-zA-Z-\s]$/; 
+  console.log(formRegex);
+
+  if (formInputFirstName.value.trim() == ""){
+    let formError = document.getElementById("firstNameErrorMsg");
+    formError.innerHTML = "Le champs est requis.";
+    formError.style.color = 'red';
+    e.preventDefault(); 
+  } else if (formRegex.test(formInputFirstName.value) == false) {
+    let formError = document.getElementById("firstNameErrorMsg");
+    formError.innerHTML = "Le nom doit comporter des lettres et tirets seulement";
+    formError.style.color = 'red';
+    e.preventDefault(); 
   }
-*/  
+
+  const formInfoCustomer = {
+    firstName: localStorage.getItem("firstName"),
+    lastName: localStorage.getItem("lastName"),
+    address: localStorage.getItem("address"),
+    city: localStorage.getItem("city"),
+    email: localStorage.getItem("email"),
+  }
+  console.log("formulaire", formInfoCustomer)  
+  e.preventDefault();
+});
+  
+
+
+
+
+
+
+/*let sendFormInfo = document.getElementsByClassName("cart__order");
+
+sendFormInfo.addEventListener('submit', function(e){
+  let formInputFirstName = document.getElementById("firstName")
+  console.log(formInput);
+  let formRegex = /^[a-zA-Z-\s]$/; // Autorise les lettres minuscules, majuscules, les tirets et les espaces.
+  console.log(formRegex);
+
+  if (formInputFirstName.value.trim() == ""){
+    let formError = docuement.getElementById("firstNameErrorMsg");
+    formError.innerHTML = "Le champs est requis.";
+    formError.style.color = 'red';
+    e.preventDefault(); 
+  } else if (formRegex.test(formInputFirstName.value) == false) {
+    let formError = docuement.getElementById("firstNameErrorMsg");
+    formError.innerHTML = "Le nom doit comporter des lettres et tirets seulement";
+    formError.style.color = 'red';
+    e.preventDefault(); 
+  }
+  
+})*/
+
+/*localStorage.setItem("firstName", document.getElementById("firstName").value);
+console.log("firstName", document.getElementById("firstName").value);
+
+localStorage.setItem("lastName", document.getElementById("lastName").value);
+console.log("lastName", document.getElementById("lastName").value);
+
+localStorage.setItem("address", document.getElementById("address").value);
+console.log("address", document.getElementById("address").value);
+
+localStorage.setItem("city", document.getElementById("city").value);
+console.log("city", document.getElementById("city").value);  
+
+localStorage.setItem("email", document.getElementById("email").value);
+console.log("email", document.getElementById("email").value);  
+*/
+
+
+
+
+//-------------------------------------------> Fin Formulaire de commande <-------------------------------------------//
