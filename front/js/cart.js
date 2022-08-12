@@ -1,14 +1,15 @@
 // Afficher les éléments présent dans le local Storage (basket)
 
-let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
+let getProductsBasket = JSON.parse(localStorage.getItem("basket"))
+ console.log(getProductsBasket)
 
-const productsInBasket = async function() {
+const productsInCart = async function() {
   if(getProductsBasket) {
     await getProductsBasket;
     console.log(getProductsBasket);
   }
 
-  document.getElementById("cart__items").innerHTML = getProductsBasket.map((basket) =>
+  document.document.getElementById("cart__items").innerHTML = basket.map((basket) =>
   ` 
   <section id="cart__items">
     <article class="cart__item" data-id="${basket.id}" data-color="${basket.color}">
@@ -35,13 +36,27 @@ const productsInBasket = async function() {
   </section>
   `
 ).join("");   // Retire la virgule qui apparait;
+
 modifQuantityBasket();
 removeProductFromBasket();
 totalPriceCart();
 totalQuantityCart();
+//btnOrderProduct();
 }
 
-productsInBasket()
+productsInCart();
+
+// const btnOrderProduct = async () => {
+//   let orderProduct = document.querySelector(".cart__order__form__submit");
+//   orderProduct.addEventListener("click", (e) => {
+//   if(orderProduct == null){
+//     alert("Veuillez ajoutez un produit")
+//   } else {
+//     return true;
+//   }
+//     e.preventDefault();
+//   })};
+//   console.log("btn order", btnOrderProduct);
 
 //****************************** Constante qui permet de supprimer les produits du panier ******************************//
 
@@ -162,82 +177,156 @@ const modifQuantityBasket = () => {
 // Bouton de commande
 let btnOrderForm = document.querySelector(".cart__order__form__submit");
   console.log(btnOrderForm);
-// Au moment du clique on en envoie le formulaire dans le local storage
+// Au moment du clique on en envoie le formulaire dans le local storage.
 btnOrderForm.addEventListener("click", (e) => {
-  let formInputFirstName = document.getElementById("firstName")
-  console.log(formInput);
-// Autorise les lettres minuscules, majuscules, les tirets et les espaces.  
-  let formRegex = /^[a-zA-Z-\s]$/; 
-  console.log(formRegex);
+// Format d'expression régulière pour le prénom, le nom, et le nom de la ville.
+const formNameRegex = (value) => {
+  return /^[A-Za-z\s]{3,20}$/.test(value);
+};
+  console.log("Regex prénom nom ville", formNameRegex);
+// Format d'expression régulière pour une adresse postale.    
+const formAddresRegex = (value) => {
+  return /^[A-Za-z0-9\s,.'-]{3,50}$/.test(value);
+};
+  console.log("Regex adresse", formAddresRegex);
+// Format d'expression régulière pour une adresse eMail.
+const formMailRegex = (value) => {
+  return /^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(value);
+};
+    console.log("Regex mail", formMailRegex);
 
-  if (formInputFirstName.value.trim() == ""){
-    let formError = document.getElementById("firstNameErrorMsg");
-    formError.innerHTML = "Le champs est requis.";
-    formError.style.color = 'red';
-    e.preventDefault(); 
-  } else if (formRegex.test(formInputFirstName.value) == false) {
-    let formError = document.getElementById("firstNameErrorMsg");
-    formError.innerHTML = "Le nom doit comporter des lettres et tirets seulement";
-    formError.style.color = 'red';
-    e.preventDefault(); 
+  
+// Récupération des valeurs du formulaire par une classe
+class form {
+  constructor (){
+    this.firstName = document.getElementById("firstName").value,
+    this.lastName = document.getElementById("lastName").value,
+    this.address = document.getElementById("address").value,
+    this.city = document.getElementById("city").value,
+    this.email = document.getElementById("email").value
   }
+}
+// On crée une nouvelle constante depuis la classe "form"
+const formContact = new form ();
 
-  const formInfoCustomer = {
-    firstName: localStorage.getItem("firstName"),
-    lastName: localStorage.getItem("lastName"),
-    address: localStorage.getItem("address"),
-    city: localStorage.getItem("city"),
-    email: localStorage.getItem("email"),
-  }
-  console.log("formulaire", formInfoCustomer)  
+//---------------------------------------------------------------------------------------------------------------------//
+// Condition et messages d'erreur pour le prénom du client
+function firstNameControleValidation() {
+  const formInputFirstName = formContact.firstName;
+  if (formNameRegex(formInputFirstName)){
+    let formError = document.getElementById("firstNameErrorMsg");
+    formError.innerHTML = "";
+    return true; 
+  } else {
+    let formError = document.getElementById("firstNameErrorMsg");
+    formError.innerHTML = "Le champ est requis. Le prénom doit comporter un minimum de 3 caractères, maximum 20 caractères et sans symboles @&:#()°/.";
+    formError.style.color = 'red';
+    return false;
+  };
+};
+//---------------------------------------------------------------------------------------------------------------------//
+// Conditions et messages d'erreur pour le nom du client  
+function lastNameControleValidation() {
+  const formInputLastName = formContact.lastName;
+  if (formNameRegex(formInputLastName)){
+    let formError = document.getElementById("lastNameErrorMsg");
+    formError.innerHTML = "";
+    return true; 
+  } else {
+    let formError = document.getElementById("lastNameErrorMsg");
+    formError.innerHTML = "Le champ est requis. Le nom doit comporter un minimum de 3 caractères, maximum 20 caractères et sans symboles @&:#()°/.";
+    formError.style.color = 'red';
+    return false;
+  };
+}  
+//---------------------------------------------------------------------------------------------------------------------//
+// Conditions et messages d'erreur pour l'adresse du client
+function addressControleValidation() {
+  const formInputAdress = formContact.address;
+    console.log(formInputAdress);
+  if (formAddresRegex(formInputAdress)){
+    let formError = document.getElementById("addressErrorMsg");
+    formError.innerHTML = "";
+    return true;
+  } else {
+    let formError = document.getElementById("addressErrorMsg");
+    formError.innerHTML = "Le champ est requis. L'adresse doit comporter un minimum de 3 caractères, maximum 50 caractères et sans symboles @&:#()°/.";
+    formError.style.color = 'red';
+    return false;
+  };
+}
+//---------------------------------------------------------------------------------------------------------------------//
+// Conditions et messages d'erreur pour le nom de la ville du client    
+function cityControleValidation() {
+  const formInputCity = formContact.city;
+  if (formNameRegex(formInputCity)){
+    let formError = document.getElementById("cityErrorMsg");
+    formError.innerHTML = "";
+    return true; 
+  } else {
+    let formError = document.getElementById("cityErrorMsg");
+    formError.innerHTML = "Le champ est requis. Le nom de la ville doit comporter un minimum de 3 caractères, maximum 20 caractères et sans symboles @&:#()°/.";
+    formError.style.color = 'red';
+    return false;
+  };
+}
+//---------------------------------------------------------------------------------------------------------------------//
+// Conditions et messages d'erreur pour l'adresse eMail  
+function emailControleValidation() {   
+  const formInfoEmail = formContact.email;
+    console.log(formInfoEmail);      
+  if (formMailRegex(formInfoEmail)){
+    let formError = document.getElementById("emailErrorMsg");
+    formError.innerHTML = "";
+    return true;
+  } else {
+    let formError = document.getElementById("emailErrorMsg");
+    formError.innerHTML = "Le champ est requis. L'adresse e-Mail n'est pas valide.";
+    formError.style.color = 'red';
+    return false;
+  }   
+}
+// Condition qui bloque l'envoie du formulaire si tout les champs ne sont pas validés
+if( firstNameControleValidation(), 
+    lastNameControleValidation(),
+    addressControleValidation(),
+    cityControleValidation(),
+    emailControleValidation()) {
+  localStorage.setItem("formConctact", JSON.stringify(formContact));
+} else {
   e.preventDefault();
-});
-  
+  alert("Veuillez compléter correctement tout les champs")
+  return false; 
+};
+console.log(formContact);
 
+// Envoie de l'objet "sendOrderProductsForm" vers le serveur
+let products = getProductsBasket;
+let contact = formContact;
 
+const submitOrderProductsForm = {
+  products,
+  contact
+};
+console.log(submitOrderProductsForm);
 
+const submitOrder = fetch("http://localhost:3000/api/products/order",{
+  method: "POST",
+  headers: {
+    'Content-Type' : 'application/json;charset=UTF-8'
+  },
+  body: JSON.stringify(submitOrderProductsForm)
+})
+  .then(res => res.json())
+  .then(data => console.log(data)) 
+  .catch(error => console.log(error)) 
+;
 
+  console.log("Envoi de l'objet vers le serveur", submitOrder)
 
-
-/*let sendFormInfo = document.getElementsByClassName("cart__order");
-
-sendFormInfo.addEventListener('submit', function(e){
-  let formInputFirstName = document.getElementById("firstName")
-  console.log(formInput);
-  let formRegex = /^[a-zA-Z-\s]$/; // Autorise les lettres minuscules, majuscules, les tirets et les espaces.
-  console.log(formRegex);
-
-  if (formInputFirstName.value.trim() == ""){
-    let formError = docuement.getElementById("firstNameErrorMsg");
-    formError.innerHTML = "Le champs est requis.";
-    formError.style.color = 'red';
-    e.preventDefault(); 
-  } else if (formRegex.test(formInputFirstName.value) == false) {
-    let formError = docuement.getElementById("firstNameErrorMsg");
-    formError.innerHTML = "Le nom doit comporter des lettres et tirets seulement";
-    formError.style.color = 'red';
-    e.preventDefault(); 
-  }
-  
-})*/
-
-/*localStorage.setItem("firstName", document.getElementById("firstName").value);
-console.log("firstName", document.getElementById("firstName").value);
-
-localStorage.setItem("lastName", document.getElementById("lastName").value);
-console.log("lastName", document.getElementById("lastName").value);
-
-localStorage.setItem("address", document.getElementById("address").value);
-console.log("address", document.getElementById("address").value);
-
-localStorage.setItem("city", document.getElementById("city").value);
-console.log("city", document.getElementById("city").value);  
-
-localStorage.setItem("email", document.getElementById("email").value);
-console.log("email", document.getElementById("email").value);  
-*/
-
-
-
-
+  e.preventDefault();
+// Vide le local storage au moment du clique sur le bouton commander  
+  //localStorage.clear();
+}
+);
 //-------------------------------------------> Fin Formulaire de commande <-------------------------------------------//
