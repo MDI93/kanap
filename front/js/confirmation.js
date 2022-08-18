@@ -6,6 +6,7 @@ const confirmationOrderNumber = newUrl.get('id');
 function displayOrderNumber(){
     document.getElementById('orderId').innerText = confirmationOrderNumber;
     alert('Votre commande est validée !');
+// Vide le local storage au moment du clique sur le bouton commander 
     localStorage.clear();
 }
 displayOrderNumber();
