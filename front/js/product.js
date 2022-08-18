@@ -80,10 +80,10 @@ const addBasket = () => {
   bouton.addEventListener("click", () => {
     let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
       console.log(getProductsBasket);  
-
+// On défini une variable pour sélectionner les couleurs
     let selectColor = document.getElementById("colors");
       console.log(selectColor.value);
-
+// On défini une variable pour sélectionner les quantités
     let addQuantityProduct = document.getElementById("quantity");
       console.log(addQuantityProduct);
 
@@ -95,26 +95,38 @@ const addInfoProduct = Object.assign({}, {
   imageUrl: `${productData.imageUrl}`,
   name: `${productData.name}`,
   price: `${productData.price}`,
-});                             
+});  
+
+// Définir un message d'erreur lors de la non saisie d'une couleur et d'une quantité non valide
+  if( selectColor.value == "" ||
+      addQuantityProduct.value == 0 ||
+      addQuantityProduct.value > 100
+      ) {
+      alert("Merci de choisir une couleur et/ou quantité valide");
+      window.location.reload();
+      return;
+      }
 
 // Si le panier comporte déjà un canapé
   if ( !getProductsBasket ) {
     getProductsBasket = [];
   }
-  // On vérifie si le canapé est déjà dans le panier (id + couleur)
-  // La Fonction Find permet de rappatrier directement l'objet s'il trouve la condition
-  // On peut donc directement le modifier pour la quantité
+
+// On vérifie si le canapé est déjà dans le panier (id + couleur)
+// La Fonction Find permet de rappatrier directement l'objet s'il trouve la condition
+// On peut donc directement le modifier pour la quantité
   const addQuantityBasket = getProductsBasket.find((product) => 
     product.id === addInfoProduct.id && product.color === addInfoProduct.color);
       if (addQuantityBasket) {
         addQuantityBasket.quantity = parseInt(addQuantityBasket.quantity) + parseInt(addInfoProduct.quantity)
-      // Sinon, si le produit n'est pas commandé, on le push directement dans le Local Storage
+// Sinon, si le produit n'est pas commandé, on le push directement dans le Local Storage
       } else {
         getProductsBasket.push(addInfoProduct);
+// Pop up qui confirme le choix du produit        
         window.confirm(
           `Votre commande de ${addQuantityProduct.value} article(s) ${productData.name} ${selectColor.value} est ajoutée au panier`
         );
       }
-      // On repousse dans le panier
+// On repousse dans le panier
       localStorage.setItem("basket", JSON.stringify(getProductsBasket))})
   } 
