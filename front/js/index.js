@@ -12,7 +12,6 @@ const products = async function () {
 // Afficher les produits en fonctions de leur données
 const getProducts =  async () => {
   await products();
-  console.log(productsData)
 
   document.getElementById("items").innerHTML = productsData.map((product) =>
   `<a href="./product.html?id=${product._id}"> 
