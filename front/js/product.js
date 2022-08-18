@@ -5,7 +5,6 @@ var search_params = new URL(document.location).searchParams;
 
 if(search_params.has('id')) {
   var id = search_params.get('id');
-  console.log(id)
 }
 
 // Afficher un seul produit en fonction de son 'ID'
@@ -45,26 +44,18 @@ const getOneKanap =  async () => {
 
 // Sélection de la couleur du canapé 
   let selectColor = document.getElementById("colors");
-    console.log("Choix des couleurs", selectColor);
-
-    console.log("Tableau des couleurs", productData.colors);
 
 // Boucle qui récupere les couleurs du tableau en fonction de l'ID
   productData.colors.forEach 
   ( color => {
-    console.log("Une couleur",color);
-
 // Crée nouvelle option en fonction du nombre de couleurs présentent dans le tableau de cet ID  
   let tagOption = document.createElement("option"); 
-
 // Affiche la couleur en fonction des options  
   tagOption.innerHTML = `${color}`;
 // Choisit la couleur dans l'ordre du tableau  
   tagOption.value = `${color}`; 
-
 // On lui demande d'aller chercher son enfant à afficher
   selectColor.appendChild(tagOption);
-    console.log("Affiche une option",tagOption);
   });
   addBasket(productData);
 };
@@ -74,18 +65,14 @@ getOneKanap()
 // Bouton ajout au panier 
 const addBasket = () => {
   let bouton = document.getElementById("addToCart");
-  console.log(bouton);
 
 // Au clique ajoute les éléments sélectionnés (Couleur & quantité) au localStorage  
   bouton.addEventListener("click", () => {
     let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
-      console.log(getProductsBasket);  
 // On défini une variable pour sélectionner les couleurs
     let selectColor = document.getElementById("colors");
-      console.log(selectColor.value);
 // On défini une variable pour sélectionner les quantités
     let addQuantityProduct = document.getElementById("quantity");
-      console.log(addQuantityProduct);
 
 // Tableau data du produit à ajouter au panier
 const addInfoProduct = Object.assign({}, {
@@ -118,7 +105,11 @@ const addInfoProduct = Object.assign({}, {
   const addQuantityBasket = getProductsBasket.find((product) => 
     product.id === addInfoProduct.id && product.color === addInfoProduct.color);
       if (addQuantityBasket) {
-        addQuantityBasket.quantity = parseInt(addQuantityBasket.quantity) + parseInt(addInfoProduct.quantity)
+        addQuantityBasket.quantity = parseInt(addQuantityBasket.quantity) + parseInt(addInfoProduct.quantity);
+// Pop up qui confirme le choix du produit   
+        window.confirm(
+          `Votre commande de ${addQuantityProduct.value} article(s) ${productData.name} ${selectColor.value} est ajoutée au panier`
+        );
 // Sinon, si le produit n'est pas commandé, on le push directement dans le Local Storage
       } else {
         getProductsBasket.push(addInfoProduct);
@@ -127,6 +118,6 @@ const addInfoProduct = Object.assign({}, {
           `Votre commande de ${addQuantityProduct.value} article(s) ${productData.name} ${selectColor.value} est ajoutée au panier`
         );
       }
-// On repousse dans le panier
+// On renvoie dans le panier
       localStorage.setItem("basket", JSON.stringify(getProductsBasket))})
   } 
