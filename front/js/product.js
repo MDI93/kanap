@@ -16,6 +16,10 @@ const oneProductKanap = async function () {
   .then((response) => response.json())
   .then((promise) => {
     productData = promise;  
+})
+  .catch(function (err) {
+  const products = document.querySelector("item");
+  products.innerHTML = `Une erreur est survenue (${err})`;
 });
 }
 
@@ -74,8 +78,8 @@ const addBasket = () => {
 
 // Au clique ajoute les éléments sélectionnés (Couleur & quantité) au localStorage  
   bouton.addEventListener("click", () => {
-    let getProductBasket = JSON.parse(localStorage.getItem("basket"));
-      console.log(getProductBasket);  
+    let getProductsBasket = JSON.parse(localStorage.getItem("basket"));
+      console.log(getProductsBasket);  
 
     let selectColor = document.getElementById("colors");
       console.log(selectColor.value);
@@ -94,20 +98,23 @@ const addInfoProduct = Object.assign({}, {
 });                             
 
 // Si le panier comporte déjà un canapé
-  if ( !getProductBasket ) {
-    getProductBasket = [];
+  if ( !getProductsBasket ) {
+    getProductsBasket = [];
   }
   // On vérifie si le canapé est déjà dans le panier (id + couleur)
   // La Fonction Find permet de rappatrier directement l'objet s'il trouve la condition
   // On peut donc directement le modifier pour la quantité
-  const addQuantityBasket = getProductBasket.find((product) => 
+  const addQuantityBasket = getProductsBasket.find((product) => 
     product.id === addInfoProduct.id && product.color === addInfoProduct.color);
       if (addQuantityBasket) {
         addQuantityBasket.quantity = parseInt(addQuantityBasket.quantity) + parseInt(addInfoProduct.quantity)
       // Sinon, si le produit n'est pas commandé, on le push directement dans le Local Storage
       } else {
-        getProductBasket.push(addInfoProduct);
+        getProductsBasket.push(addInfoProduct);
+        window.confirm(
+          `Votre commande de ${addQuantityProduct.value} article(s) ${productData.name} ${selectColor.value} est ajoutée au panier`
+        );
       }
       // On repousse dans le panier
-      localStorage.setItem("basket", JSON.stringify(getProductBasket))})
+      localStorage.setItem("basket", JSON.stringify(getProductsBasket))})
   } 
