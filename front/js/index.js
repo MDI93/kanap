@@ -1,3 +1,5 @@
+//*********************** Récupérer et afficher les produits ***********************//
+
 // Récuperer les données des produits sur l'API et afficher sur la page d'accueil
 let productsData = [];
 

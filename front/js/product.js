@@ -1,4 +1,4 @@
-// Afficher chaque produit sur une page détail au moment du clique
+//********* Afficher chaque produit sur une page détail au moment du clique *********//
 
 // Récuperer URL pour un seul Produit
 var search_params = new URL(document.location).searchParams;   
@@ -21,6 +21,8 @@ const oneProductKanap = async function () {
   products.innerHTML = `Une erreur est survenue (${err})`;
 });
 }
+
+//*********************** Afficher un seul canapé dynamiquement **********************//
 
 // Fonction qui permet d'afficher notre canapé
 const getOneKanap =  async () => {
@@ -45,7 +47,7 @@ const getOneKanap =  async () => {
 // Sélection de la couleur du canapé 
   let selectColor = document.getElementById("colors");
 
-// Boucle qui récupere les couleurs du tableau en fonction de l'ID
+// Boucle qui récupère les couleurs du tableau en fonction de l'ID
   productData.colors.forEach 
   ( color => {
 // Crée nouvelle option en fonction du nombre de couleurs présentent dans le tableau de cet ID  
