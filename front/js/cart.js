@@ -7,19 +7,18 @@ function getProductsBasket(){
     document.querySelector("#totalQuantity").innerHTML = "0";
     document.querySelector("#totalPrice").innerHTML = "0";
     document.querySelector("h1").innerHTML = "Vous n'avez pas d'article dans votre panier";
+    return [];
   }
   return JSON.parse(productsBasket);
 }
 
 let basket = getProductsBasket();
-  console.log(basket)
   if( basket === null ) {
     alert("Veuillez ajouter un produit");
   } else {
     const displayCart = async function() {
       if(basket) {
         await basket;
-        console.log(basket);
       }
     document.getElementById("cart__items").innerHTML = basket.map((basket) =>
        ` 
@@ -47,8 +46,7 @@ let basket = getProductsBasket();
          </article>
        </section>
        `
-    ).join("");   
-     // Retire la virgule qui apparait;
+    ).join("");   // Retire la virgule qui apparait;
      modifQuantityBasket();
      removeProductFromBasket();
      totalPriceCart();
@@ -62,7 +60,6 @@ let basket = getProductsBasket();
 const removeProductFromBasket = async () => {
 // Une variable qui permet de retrouver les boutons supprimer
   let deleteItem = document.getElementsByClassName("deleteItem");
-      console.log("Bouton supprimer", deleteItem);
 // Une boucle qui au moment du clique permet de choisir le bon produit
   for( let i = 0 ; i < deleteItem.length ; i++){
     deleteItem[i].addEventListener("click", () => {
@@ -70,12 +67,10 @@ const removeProductFromBasket = async () => {
   let recupDataIdColor = deleteItem[i].closest("article");
 // Variable pour attribuer ces datas
   let dataId = recupDataIdColor.getAttribute("data-id");
-    console.log(dataId)
   let dataColor = recupDataIdColor.getAttribute("data-color");
-    console.log(dataColor)
+
 // On utilise Filter pour supprimer de maniere précise un élément 
       basket = basket.filter(p => p._id !== dataId && p.color !== dataColor);
-      console.log("data", basket)
 // On renvoie les informations au local storage
       localStorage.setItem("basket", JSON.stringify(basket));
 // Supprime l'élément       
@@ -96,15 +91,12 @@ const totalPriceCart = async () => {
   for(let t = 0 ; t < basket.length ; t++){
     const productPriceTotal =+ basket[t].price * basket[t].quantity;
     totalPriceProduct.push(productPriceTotal);
-      console.log("constante", totalPriceProduct)
 // Additionner les prix avec la méthode reduce()  
     const reducer = (accumulator, currentValue) => accumulator + currentValue;    
     const totalPrice = totalPriceProduct.reduce(reducer, 0);
-      console.log("totalPrice", totalPrice)
 // Variable qui permet d'afficher le prix total du panier dans l'HTML  
     let htmlPrice = document.querySelector("#totalPrice");
     htmlPrice.innerHTML = `${totalPrice}`;
-      console.log(htmlPrice);
   }  
 };
 
@@ -119,15 +111,12 @@ const totalQuantityCart = async () => {
   for(let q = 0 ; q < basket.length ; q++){
     const productQuantityTotal =+ basket[q].quantity;
     totalQuantityProduct.push(productQuantityTotal);
-      console.log("constante", totalQuantityProduct)
   // Additionner les prix avec la méthode reduce()  
     const reducer = (accumulator, currentValue) => accumulator + currentValue;     
     const totalQuantity = totalQuantityProduct.reduce(reducer, 0);
-      console.log("totalQuantity", totalQuantity)
   // Variable qui permet d'afficher la quantité totale du panier dans l'HTML  
     let htmlQuantity = document.querySelector("#totalQuantity");
     htmlQuantity.innerHTML = `${totalQuantity}`;
-      console.log(htmlQuantity);
   } 
 };
 
@@ -138,31 +127,20 @@ const totalQuantityCart = async () => {
 const modifQuantityBasket = () => {
 
   let addQuantityFromBasket = document.getElementsByClassName("itemQuantity")
-      console.log("Bouton select + -", addQuantityFromBasket);
 // Une boucle qui au moment du clique permet de choisir le nombre de quantité
   for( let m = 0 ; m < addQuantityFromBasket.length ; m++){
     addQuantityFromBasket[m].addEventListener("change", () => {
-      console.log("clique", addQuantityFromBasket[m].addEventListener)
 // Recupère la nouvelle valeur au moment du clique      
     let moreQuantity = addQuantityFromBasket[m].value;
-     console.log(moreQuantity);
 // On utilise 'closest()' pour récuperer la data id & color sur l'article      
     let recupDataIdColor = addQuantityFromBasket[m].closest("article");
-      console.log(recupDataIdColor)
 // Variable pour attribuer ces datas      
     let dataId = recupDataIdColor.getAttribute("data-id");
-      console.log(dataId)
     let dataColor = recupDataIdColor.getAttribute("data-color");
-      console.log(dataColor)
 
-    console.log("avant find", basket);
 // On utilise 'find()'     
     let foundProducts = basket.find(p => p.id === dataId && p.color === dataColor);
-      console.log("methode find", foundProducts) 
-
     let index = basket.indexOf(foundProducts)
-      console.log(index)
-    
       basket.fill(foundProducts.quantity = moreQuantity, index, index);
 
     localStorage.setItem("basket", JSON.stringify(basket));
@@ -222,8 +200,8 @@ function firstNameControleValidation() {
     return true; 
   } else {
     let formError = document.getElementById("firstNameErrorMsg");
-    formError.innerHTML = "Le champ est requis. Le prénom doit comporter un minimum de 3 caractères, maximum 20 caractères et sans symboles @&:#()°/.";
-    formError.style.color = 'red';
+    formError.innerHTML = "Le champ est requis. Veuillez saisir un prénom valide!."
+    formError.style.color = '#B22222';
     return false;
   };
 };
@@ -237,8 +215,8 @@ function lastNameControleValidation() {
     return true; 
   } else {
     let formError = document.getElementById("lastNameErrorMsg");
-    formError.innerHTML = "Le champ est requis. Le nom doit comporter un minimum de 3 caractères, maximum 20 caractères et sans symboles @&:#()°/.";
-    formError.style.color = 'red';
+    formError.innerHTML = "Le champ est requis. Veuillez saisir un nom valide!";
+    formError.style.color = '#B22222';
     return false;
   };
 }  
@@ -253,8 +231,8 @@ function addressControleValidation() {
     return true;
   } else {
     let formError = document.getElementById("addressErrorMsg");
-    formError.innerHTML = "Le champ est requis. L'adresse doit comporter un minimum de 3 caractères, maximum 50 caractères et sans symboles @&:#()°/.";
-    formError.style.color = 'red';
+    formError.innerHTML = "Le champ est requis. Veuillez saisir une adresse valide!";
+    formError.style.color = '#B22222';
     return false;
   };
 }
@@ -268,8 +246,8 @@ function cityControleValidation() {
     return true; 
   } else {
     let formError = document.getElementById("cityErrorMsg");
-    formError.innerHTML = "Le champ est requis. Le nom de la ville doit comporter un minimum de 3 caractères, maximum 20 caractères et sans symboles @&:#()°/.";
-    formError.style.color = 'red';
+    formError.innerHTML = "Le champ est requis. Veuillez saisir une ville valide!";
+    formError.style.color = '#B22222';
     return false;
   };
 }
@@ -284,39 +262,41 @@ function emailControleValidation() {
     return true;
   } else {
     let formError = document.getElementById("emailErrorMsg");
-    formError.innerHTML = "Le champ est requis. L'adresse e-Mail n'est pas valide.";
-    formError.style.color = 'red';
+    formError.innerHTML = "Le champ est requis. Veuillez saisir une adresse e-mail valide!";
+    formError.style.color = '##B22222';
     return false;
   }   
 }
 
-// incremente errormsgclick, dans chaque fonction
-// let errorMsgClick = 0;
+// Si le panier est vide message d'erreur et bloque l'envoie
+  if( basket.length < 1 ){
+    e.preventDefault();
+    alert("Veuillez ajouter un produit");
+    return false;
+  } else {
+    basket;
+    e.preventDefault();
+  }
 
-// firstNameControleValidation() 
-// lastNameControleValidation() 
-// addressControleValidation() 
-// cityControleValidation()  
-// emailControleValidation()
+// Si le formulaire est incomplet retourner un message
+  if (firstNameControleValidation() &&
+  lastNameControleValidation() && 
+  addressControleValidation() && 
+  cityControleValidation() &&  
+  emailControleValidation()) {
+    localStorage.setItem("formContact", JSON.stringify(formContact));
+    e.preventDefault();
+  } else {
+    e.preventDefault();
+    alert("Veuillez compléter tout les champs");
+    return false;
+  };
 
-// // Condition qui bloque l'envoie du formulaire si tout les champs ne sont pas validés
-// if( firstNameControleValidation() && 
-//     lastNameControleValidation() &&
-//     addressControleValidation() &&
-//     cityControleValidation() &&
-//     emailControleValidation()) {
-//   localStorage.setItem("formConctact", JSON.stringify(formContact));
-//   e.preventDefault();
-// } else {
-//   e.preventDefault();
-//   alert("Veuillez compléter correctement tout les champs")
-//   return false; 
-// };
-// console.log(formContact);
+// Condition qui bloque l'envoie du formulaire si tout les champs ne sont pas validés
 
 //*********************************************** Envoi de la commande  ***********************************************//
 
-// Envoie de l'objet "sendOrderProductsForm" vers le serveur
+// On crée  un tableau qui récupère seulement les ID des produits
 
 let basketId = [];
 
@@ -324,32 +304,48 @@ for(product of basket){
   basketId.push(product.id)
 }
 
-
+// Récupération des données client et panier avant envoie
+let contactInfo;
+let order;
 let products = basketId;
-let contact = formContact;
 
-const submitOrderProductsForm = {
-  products,
-  contact
-};
-console.log(submitOrderProductsForm);
+function submitOrderProductsForm() {
+  contactInfo = JSON.parse(localStorage.getItem("formContact"));
+  // Définition de l'objet commande
+  order = {
+    contact: {
+      firstName: contactInfo.firstName,
+      lastName: contactInfo.lastName,
+      address: contactInfo.address,
+      city: contactInfo.city,
+      email: contactInfo.email,
+    },
+    products: products,
+  }
+}
 
+// Envoi des données vers le serveur avec la méthode POST Fetch
 const submitOrder = 
+  submitOrderProductsForm();
   fetch("http://localhost:3000/api/products/order",{
     method: "POST",
     headers: {
       'Content-Type' : 'application/json;charset=UTF-8'
     },
-    body: JSON.stringify(submitOrderProductsForm)
+    body: JSON.stringify(order)
   })
-    .then(res => res.json())
-    .then(data => console.log(data))
-    .catch(error => console.log(error))
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (response) {
+      document.location.href = `confirmation.html?id=${response.orderId}`;
+    })
+    .catch(function () {
+      alert('Une erreur est survenue');
+    })
   console.log("Envoi de l'objet vers le serveur", submitOrder)
 
   e.preventDefault();
-// Vide le local storage au moment du clique sur le bouton commander  
-  //localStorage.clear();
 }
 );
 //-------------------------------------------> Fin Formulaire de commande <-------------------------------------------//
