@@ -173,7 +173,7 @@ const formAddresRegex = (value) => {
   console.log("Regex adresse", formAddresRegex);
 // Format d'expression régulière pour une adresse eMail.
 const formMailRegex = (value) => {
-  return /^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(value);
+  return /^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-{1,3}]+)*$/.test(value);
 };
     console.log("Regex mail", formMailRegex);
 
