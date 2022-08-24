@@ -25,7 +25,7 @@ let basket = getProductsBasket();
        <section id="cart__items">
          <article class="cart__item" data-id="${basket.id}" data-color="${basket.color}">
            <div class="cart__item__img">
-             <img src="${basket.imageUrl}" alt="Photographie d'un canapé">
+             <img src="${basket.imageUrl}" alt="${basket.altTxt}">
            </div>
            <div class="cart__item__content">
              <div class="cart__item__content__description">

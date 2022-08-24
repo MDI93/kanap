@@ -30,7 +30,7 @@ const getOneKanap =  async () => {
 
 // Ajout de l'image du canapé  
   document.getElementById("item__img").innerHTML = 
-  ` <img src="${productData.imageUrl}" alt="Photographie d'un canapé"> `      
+  ` <img src="${productData.imageUrl}" alt="${productData.altTxt}"> `      
 
 // Ajout du nom du canapé
   document.getElementById("title").innerHTML = 
@@ -84,6 +84,7 @@ const addInfoProduct = Object.assign({}, {
   imageUrl: `${productData.imageUrl}`,
   name: `${productData.name}`,
   price: `${productData.price}`,
+  altTxt: `${productData.altTxt}`
 });  
 
 // Définir un message d'erreur lors de la non saisie d'une couleur et d'une quantité non valide
