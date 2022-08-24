@@ -158,25 +158,21 @@ const modifQuantityBasket = () => {
 
 // Bouton de commande
 let btnOrderForm = document.querySelector(".cart__order__form__submit");
-  console.log(btnOrderForm);
+
 // Au moment du clique on en envoie le formulaire dans le local storage.
 btnOrderForm.addEventListener("click", (e) => {
 // Format d'expression régulière pour le prénom, le nom, et le nom de la ville.
 const formNameRegex = (value) => {
   return /^[A-Za-z\s]{3,20}$/.test(value);
 };
-  console.log("Regex prénom nom ville", formNameRegex);
 // Format d'expression régulière pour une adresse postale.    
 const formAddresRegex = (value) => {
   return /^[A-Za-z0-9\s,.'-]{3,50}$/.test(value);
 };
-  console.log("Regex adresse", formAddresRegex);
 // Format d'expression régulière pour une adresse eMail.
 const formMailRegex = (value) => {
   return /^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-{1,3}]+)*$/.test(value);
 };
-    console.log("Regex mail", formMailRegex);
-
 // Récupération des valeurs du formulaire par une classe
 class form {
   constructor (){
@@ -224,7 +220,6 @@ function lastNameControleValidation() {
 // Conditions et messages d'erreur pour l'adresse du client
 function addressControleValidation() {
   const formInputAdress = formContact.address;
-    console.log(formInputAdress);
   if (formAddresRegex(formInputAdress)){
     let formError = document.getElementById("addressErrorMsg");
     formError.innerHTML = "";
@@ -254,8 +249,7 @@ function cityControleValidation() {
 //---------------------------------------------------------------------------------------------------------------------//
 // Conditions et messages d'erreur pour l'adresse eMail  
 function emailControleValidation() {   
-  const formInfoEmail = formContact.email;
-    console.log(formInfoEmail);      
+  const formInfoEmail = formContact.email;    
   if (formMailRegex(formInfoEmail)){
     let formError = document.getElementById("emailErrorMsg");
     formError.innerHTML = "";
@@ -263,7 +257,7 @@ function emailControleValidation() {
   } else {
     let formError = document.getElementById("emailErrorMsg");
     formError.innerHTML = "Le champ est requis. Veuillez saisir une adresse e-mail valide!";
-    formError.style.color = '##B22222';
+    formError.style.color = '#B22222';
     return false;
   }   
 }
@@ -343,7 +337,6 @@ const submitOrder =
     .catch(function () {
       alert('Une erreur est survenue');
     })
-  console.log("Envoi de l'objet vers le serveur", submitOrder)
 
   e.preventDefault();
 }
