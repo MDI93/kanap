@@ -83,7 +83,6 @@ const addInfoProduct = Object.assign({}, {
   color: `${selectColor.value}`,
   imageUrl: `${productData.imageUrl}`,
   name: `${productData.name}`,
-  price: `${productData.price}`,
   altTxt: `${productData.altTxt}`
 });  
 
