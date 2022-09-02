@@ -71,28 +71,33 @@ const displayBasket = (basket, products) => {
 
 //****************************** Constante qui permet de supprimer les produits du panier ******************************//
 
-const removeProductFromBasket = async () => {
-// Une variable qui permet de retrouver les boutons supprimer
-  let deleteItem = document.getElementsByClassName("deleteItem");
-// Une boucle qui au moment du clique permet de choisir le bon produit
-  for( let i = 0 ; i < deleteItem.length ; i++){
-    deleteItem[i].addEventListener("click", () => {
-// On utilise 'closest' pour récuperer la data id & color sur l'article
-  let recupDataIdColor = deleteItem[i].closest("article");
-// Variable pour attribuer ces datas
-  let dataId = recupDataIdColor.getAttribute("data-id");
-  let dataColor = recupDataIdColor.getAttribute("data-color");
-
-// On utilise Filter pour supprimer de maniere précise un élément 
-      basket = basket.filter(p => p._id !== dataId && p.color !== dataColor);
-// On renvoie les informations au local storage
-      localStorage.setItem("basket", JSON.stringify(basket)); 
-// Supprime l'élément       
-      recupDataIdColor.remove();
-// Rafraichissement de la page      
-      location.reload();
+// Fonction permettant de supprimer un produit du panier
+const removeProductFromBasket = () => {
+  let removeItems = document.querySelectorAll('.deleteItem');
+// Au clique du bouton "supprimer" le produit sera retirer du panier
+removeItems.forEach((deleteItem) => {
+  deleteItem.addEventListener('click', () => {
+    let productsInBasket = basket.length;
+// On récupére les éléments afin de les supprimer
+  for (i = 0; i < productsInBasket; i++) {
+// Cas où il n'y a qu'un seul type de produits dans le panier
+    if (basket[i].quantity >= 1 && productsInBasket == 1) {
+          return (localStorage.removeItem('basket'), (location.href = 'cart.html'));
+        }
+// Cas où il y a plus d'un seul type de produits dans le panier
+    if (basket[i].quantity >= 1 && 
+        productsInBasket != 1 && 
+        basket[i].id == deleteItem.dataset.id && 
+        basket[i].couleur == deleteItem.dataset.color) 
+        {
+        basket.splice(i, 1);
+        localStorage.setItem('basket', JSON.stringify(basket));
+        location.href = 'cart.html';
+        }
+      }
     });
-  }};
+  });
+};
 
 //******************************** Constante qui permet de calculer le total du panier ********************************//
 
